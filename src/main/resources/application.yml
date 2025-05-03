@@ -1,1 +1,25 @@
-spring.application.name=rms
+server:
+  port: 8080  # 원하는 포트로 수정 가능
+
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@218.48.123.111:1521/XEPDB1  # 실제 오라클 서비스명에 맞게 수정
+    username: rms
+    password: Rms123!
+
+# MyBatis 설정
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true       # user_id → userId 자동 매핑
+    cache-enabled: false                     # 캐시 필요 시 true
+    default-fetch-size: 100
+    default-statement-timeout: 30
+  type-aliases-package: com.smart.rms.domain  # VO/DTO 패키지 위치
+  mapper-locations: classpath:mapper/**/*.xml # Mapper XML 위치
+
+logging:
+  level:
+    root: info
+    com.smart.rms: debug  # 필요한 경우 디버그 로그 확인
+    org.mybatis: debug    # MyBatis SQL 로그 보기
