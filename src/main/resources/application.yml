@@ -23,3 +23,8 @@ logging:
     root: info
     com.smart.rms: debug  # 필요한 경우 디버그 로그 확인
     org.mybatis: debug    # MyBatis SQL 로그 보기
+    org.springframework.boot.autoconfigure.security: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+
+
