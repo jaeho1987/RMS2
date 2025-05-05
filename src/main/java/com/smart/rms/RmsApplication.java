@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.smart.rms.mapper")
+@MapperScan("com.smart.rms.*.mapper")
 public class RmsApplication {
 
 	public static void main(String[] args) {

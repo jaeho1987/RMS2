@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@218.48.123.111:1521/XEPDB1  # 실제 오라클 서비스명에 맞게 수정
+    url: jdbc:oracle:thin:@218.48.123.111:1522/XEPDB1  # 실제 오라클 서비스명에 맞게 수정
     username: rms
     password: Rms123!
 

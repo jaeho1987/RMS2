@@ -1,4 +1,4 @@
-package com.smart.rms.model;
+package com.smart.rms.system.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
