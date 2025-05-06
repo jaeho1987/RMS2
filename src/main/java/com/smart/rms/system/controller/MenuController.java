@@ -1,6 +1,6 @@
 package com.smart.rms.system.controller;
 
-import com.smart.rms.system.model.Menu;
+import com.smart.rms.system.model.TbMenu;
 import com.smart.rms.system.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -18,7 +18,7 @@ public class MenuController {
     private final MenuService menuService;
 
     @GetMapping
-    public List<Menu> getMenus(Authentication authentication) {
+    public List<TbMenu> getMenus(Authentication authentication) {
         String userId = authentication.getName(); // Spring Security에서 로그인된 사용자 ID
         return menuService.getMenusByUserId(userId);
     }

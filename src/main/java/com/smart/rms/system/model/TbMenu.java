@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor        // 프레임워크에서 기본 생성자 필요
 @AllArgsConstructor       // 빌더나 전체 생성자 사용을 위한 보조
 @Builder                  // 빌더 패턴 사용
-public class Menu {
+public class TbMenu {
     private Long menuSeq;
     private Long parentSeq;
     private String menuName;

@@ -5,7 +5,7 @@
 
 <mapper namespace="com.smart.rms.system.mapper.MenuMapper">
 
-    <select id="selectMenusByUserId" resultType="com.smart.rms.system.model.Menu">
+    <select id="selectMenusByUserId" resultType="com.smart.rms.system.model.TbMenu">
         SELECT M.MENU_SEQ
              , M.MENU_NAME
              , M.PARENT_SEQ
