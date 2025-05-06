@@ -1,4 +1,4 @@
-package com.smart.rms.auth.controller;
+package com.smart.rms.system.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

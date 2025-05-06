@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smart.rms.system.mapper.CompanyMapper">
+
+    <select id="findAll" resultType="com.smart.rms.system.model.TbCompany">
+        SELECT COMPANY_SEQ
+             , COMPANY_NAME
+             , BIZ_NO
+             , BIZ_TYPE
+             , BIZ_CONDITION
+             , TEL_NO
+             , EMAIL
+             , ZIP_CODE
+             , ADDRESS
+             , DESCRIPTION
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+        FROM TB_COMPANY
+        WHERE 1=1
+          AND DEL_YN = 'N'
+        ORDER BY COMPANY_NAME ASC
+    </select>
+
+    <select id="findById" resultType="com.smart.rms.system.model.TbCompany">
+        SELECT COMPANY_SEQ
+             , COMPANY_NAME
+             , BIZ_NO
+             , BIZ_TYPE
+             , BIZ_CONDITION
+             , TEL_NO
+             , EMAIL
+             , ZIP_CODE
+             , ADDRESS
+             , DESCRIPTION
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+        FROM TB_COMPANY
+        WHERE COMPANY_SEQ = #{companySeq}
+    </select>
+
+    <insert id="save" parameterType="com.smart.rms.system.model.TbCompany">
+        <selectKey keyProperty="companySeq" resultType="long" order="BEFORE">
+            SELECT SEQ_COMPANY.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO TB_COMPANY (
+        COMPANY_SEQ
+        , COMPANY_NAME
+        , BIZ_NO
+        , BIZ_TYPE
+        , BIZ_CONDITION
+        , TEL_NO
+        , EMAIL
+        , ZIP_CODE
+        , ADDRESS
+        , DESCRIPTION
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        )
+        VALUES (
+        #{companySeq}
+        , #{companyName}
+        , #{bizNo}
+        , #{bizType}
+        , #{bizCondition}
+        , #{telNo}
+        , #{email}
+        , #{zipCode}
+        , #{address}
+        , #{description}
+        , 'N'
+        , #{regId}
+        , SYSDATE
+        )
+    </insert>
+
+    <update id="update" parameterType="com.smart.rms.system.model.TbCompany">
+        UPDATE TB_COMPANY
+        SET MOD_DT = SYSDATE
+        <if test="companyName != null">
+            , COMPANY_NAME = #{companyName, jdbcType=VARCHAR}
+        </if>
+        <if test="bizNo != null">
+            , BIZ_NO = #{bizNo, jdbcType=VARCHAR}
+        </if>
+        <if test="bizType != null">
+            , BIZ_TYPE = #{bizType, jdbcType=VARCHAR}
+        </if>
+        <if test="bizCondition != null">
+            , BIZ_CONDITION = #{bizCondition, jdbcType=VARCHAR}
+        </if>
+        <if test="telNo != null">
+            , TEL_NO = #{telNo, jdbcType=VARCHAR}
+        </if>
+        <if test="email != null">
+            , EMAIL = #{email, jdbcType=VARCHAR}
+        </if>
+        <if test="zipCode != null">
+            , ZIP_CODE = #{zipCode, jdbcType=VARCHAR}
+        </if>
+        <if test="address != null">
+            , ADDRESS = #{address, jdbcType=VARCHAR}
+        </if>
+        <if test="description != null">
+            , DESCRIPTION = #{description, jdbcType=VARCHAR}
+        </if>
+        <if test="modId != null">
+            , MOD_ID = #{modId, jdbcType=VARCHAR}
+        </if>
+        WHERE COMPANY_SEQ = #{companySeq, jdbcType=NUMERIC}
+    </update>
+
+
+    <update id="deleteById">
+        UPDATE TB_COMPANY
+        SET DEL_YN = 'Y'
+          , MOD_ID = 'system'
+          , MOD_DT = SYSDATE
+        WHERE COMPANY_SEQ = #{companySeq}
+    </update>
+
+</mapper>

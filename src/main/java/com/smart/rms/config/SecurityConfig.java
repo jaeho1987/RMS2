@@ -24,15 +24,19 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        })
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/loginForm").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-//                        .loginPage("/dummy-login")               // 실제 화면 없어도 됨
-                        .loginProcessingUrl("/loginForm")         // POST 요청으로 로그인 처리
+                        .loginProcessingUrl("/loginForm")
                         .successHandler((request, response, authentication) -> {
-                            response.setStatus(HttpServletResponse.SC_OK); // 200 OK 응답만 보내고 끝냄
+                            response.setStatus(HttpServletResponse.SC_OK);
                         })
                         .permitAll()
                 );
