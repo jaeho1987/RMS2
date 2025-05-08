@@ -18,9 +18,7 @@ public class UserController {
 
     @GetMapping
     public List<TbUser> getAll() {
-        List<TbUser> list = userService.findAll();
-        String a = "a";
-        return list;
+        return userService.findAll();
     }
 
     @GetMapping("/getType")
