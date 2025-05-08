@@ -5,6 +5,7 @@ import com.smart.rms.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,16 @@ public class UserController {
 
     @GetMapping
     public List<TbUser> getAll() {
-        return userService.findAll();
+        List<TbUser> list = userService.findAll();
+        String a = "a";
+        return list;
+    }
+
+    @GetMapping("/getType")
+    public Map getType() {
+        HashMap map = new HashMap<>();
+        map.put("type","호출");
+        return map;
     }
 
     @GetMapping("/{userId}")
