@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smart.rms.architecture.mapper.BizCodeMapper">
+
+    <!-- 전체 조회 -->
+    <select id="findAll" resultType="com.smart.rms.architecture.model.TbBizCode">
+        SELECT
+            BIZ_SEQ
+             , PARENT_SEQ
+             , LEVEL_NO
+             , NAME
+             , DESCRIPTION
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+        FROM TB_BIZ_CODE
+        WHERE DEL_YN = 'N'
+        ORDER BY LEVEL_NO, BIZ_SEQ
+    </select>
+
+    <!-- 단건 조회 -->
+    <select id="findById" resultType="com.smart.rms.architecture.model.TbBizCode">
+        SELECT
+            BIZ_SEQ
+             , PARENT_SEQ
+             , LEVEL_NO
+             , NAME
+             , DESCRIPTION
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+        FROM TB_BIZ_CODE
+        WHERE BIZ_SEQ = #{bizSeq}
+    </select>
+
+    <!-- 등록 -->
+    <insert id="save" parameterType="com.smart.rms.architecture.model.TbBizCode">
+        <selectKey keyProperty="bizSeq" resultType="long" order="BEFORE">
+            SELECT SEQ_BIZ_CODE.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO TB_BIZ_CODE (
+        BIZ_SEQ, PARENT_SEQ, LEVEL_NO, NAME, DESCRIPTION,
+        DEL_YN, REG_ID, REG_DT
+        ) VALUES (
+        #{bizSeq},  #{parentSeq, jdbcType=NUMERIC},
+        #{levelNo}, #{name}, #{description},
+        'N', #{regId}, SYSDATE
+        )
+    </insert>
+
+    <!-- 수정 -->
+    <update id="update" parameterType="com.smart.rms.architecture.model.TbBizCode">
+        UPDATE TB_BIZ_CODE
+        SET MOD_DT = SYSDATE
+        <if test="name != null">, NAME = #{name}</if>
+        <if test="description != null">, DESCRIPTION = #{description}</if>
+        <if test="modId != null">, MOD_ID = #{modId}</if>
+        WHERE BIZ_SEQ = #{bizSeq}
+    </update>
+
+    <!-- 삭제 (논리 삭제 처리) -->
+    <delete id="deleteById">
+        UPDATE TB_BIZ_CODE
+        SET DEL_YN = 'Y'
+          , MOD_DT = SYSDATE
+        WHERE BIZ_SEQ = #{bizSeq}
+    </delete>
+
+    <select id="countChildren" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_BIZ_CODE
+        WHERE PARENT_SEQ = #{bizSeq}
+          AND DEL_YN = 'N'
+    </select>
+
+
+</mapper>
