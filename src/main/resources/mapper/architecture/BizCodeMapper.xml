@@ -45,14 +45,24 @@
         <selectKey keyProperty="bizSeq" resultType="long" order="BEFORE">
             SELECT SEQ_BIZ_CODE.NEXTVAL FROM DUAL
         </selectKey>
-
         INSERT INTO TB_BIZ_CODE (
-        BIZ_SEQ, PARENT_SEQ, LEVEL_NO, NAME, DESCRIPTION,
-        DEL_YN, REG_ID, REG_DT
+        BIZ_SEQ
+        , PARENT_SEQ
+        , LEVEL_NO
+        , NAME
+        , DESCRIPTION
+        , DEL_YN
+        , REG_ID
+        , REG_DT
         ) VALUES (
-        #{bizSeq},  #{parentSeq, jdbcType=NUMERIC},
-        #{levelNo}, #{name}, #{description},
-        'N', #{regId}, SYSDATE
+        #{bizSeq,       jdbcType=INTEGER}
+        , #{parentSeq,    jdbcType=INTEGER}
+        , #{levelNo,      jdbcType=INTEGER}
+        , #{name,         jdbcType=VARCHAR}
+        , #{description,  jdbcType=VARCHAR}
+        , 'N'
+        , #{regId,        jdbcType=VARCHAR}
+        , SYSDATE
         )
     </insert>
 
