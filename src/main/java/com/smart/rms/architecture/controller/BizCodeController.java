@@ -29,10 +29,17 @@ public class BizCodeController {
     }
 
     // 등록
+    // 기존 service.save(...) 는 int 반환(행수),
+    // 하지만 code.bizSeq 에 새 PK 가 들어오므로, controller 에서 long 을 리턴.
     @PostMapping
-    public int save(@RequestBody TbBizCode code) {
-        return bizCodeService.save(code);
+    public long save(@RequestBody TbBizCode code) {
+        // Insert
+        int rows = bizCodeService.save(code);
+        // code.bizSeq에는 selectKey를 통해 시퀀스가 들어있음
+        long newSeq = code.getBizSeq(); // 실제 PK
+        return newSeq;
     }
+
 
     // 수정
     @PutMapping("/{id}")
