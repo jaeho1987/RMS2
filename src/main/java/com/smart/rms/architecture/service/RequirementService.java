@@ -4,11 +4,13 @@ package com.smart.rms.architecture.service;
 import com.smart.rms.architecture.mapper.RequirementMapper;
 import com.smart.rms.architecture.model.TbRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class RequirementService {
 
@@ -25,8 +27,10 @@ public class RequirementService {
     }
 
     // 등록
-    public int insert(TbRequirement req) {
-        return mapper.insert(req);
+    public TbRequirement insert(TbRequirement req) {
+        mapper.insert(req);
+        log.info("TbRequirement : " + req);
+        return mapper.findById(req.getReqSeq());  // ✅ INSERT 후 다시 조회해서 리턴
     }
 
     // 수정

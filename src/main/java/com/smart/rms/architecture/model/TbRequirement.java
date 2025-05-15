@@ -12,9 +12,9 @@ public class TbRequirement {
     private String reqId;
     private String reqName;
     private String reqDesc;
-    private Long reqTypeCode;
-    private Long priorityCode;
-    private Long statusCode;
+    private String reqTypeCode;
+    private String priorityCode;
+    private String statusCode;
     private Long parentSeq;
 
     private String ownerId;
