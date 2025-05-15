@@ -5,6 +5,7 @@ import com.smart.rms.architecture.service.BizCodeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/biz-code")
@@ -52,6 +53,22 @@ public class BizCodeController {
     @DeleteMapping("/{id}")
     public int delete(@PathVariable Long id) {
         return bizCodeService.deleteById(id);
+    }
+
+    // ✅ 정렬 저장 API 추가
+    @PutMapping("/order")
+    public void updateOrder(@RequestBody List<TbBizCode> list) {
+        bizCodeService.updateOrder(list, "admin"); // 또는 인증된 사용자
+    }
+    @PostMapping("/check-sys-code")
+    public Map<String, Boolean> checkSysCode(@RequestBody TbBizCode code) {
+        boolean exists = bizCodeService.isSysCodeExists(code);
+        return Map.of("exists", exists);
+    }
+
+    @GetMapping("/flat-list")
+    public List<Map<String, Object>> getFlatSystemList() {
+        return bizCodeService.findFlatSystemList();
     }
 
 }
