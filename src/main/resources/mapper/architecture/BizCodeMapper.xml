@@ -6,13 +6,15 @@
 <mapper namespace="com.smart.rms.architecture.mapper.BizCodeMapper">
 
     <!-- 전체 조회 -->
-    <select id="findAll" resultType="com.smart.rms.architecture.model.TbBizCode">
+    <select id="findAll" resultType="TbBizCode">
         SELECT
             BIZ_SEQ
              , PARENT_SEQ
              , LEVEL_NO
              , NAME
              , DESCRIPTION
+             , SYS_CODE
+             , ORDER_NO
              , DEL_YN
              , REG_ID
              , REG_DT
@@ -20,17 +22,19 @@
              , MOD_DT
         FROM TB_BIZ_CODE
         WHERE DEL_YN = 'N'
-        ORDER BY LEVEL_NO, BIZ_SEQ
+        ORDER BY LEVEL_NO, ORDER_NO
     </select>
 
     <!-- 단건 조회 -->
-    <select id="findById" resultType="com.smart.rms.architecture.model.TbBizCode">
+    <select id="findById" resultType="TbBizCode">
         SELECT
             BIZ_SEQ
              , PARENT_SEQ
              , LEVEL_NO
              , NAME
              , DESCRIPTION
+             , SYS_CODE
+             , ORDER_NO
              , DEL_YN
              , REG_ID
              , REG_DT
@@ -41,7 +45,7 @@
     </select>
 
     <!-- 등록 -->
-    <insert id="save" parameterType="com.smart.rms.architecture.model.TbBizCode">
+    <insert id="save" parameterType="TbBizCode">
         <selectKey keyProperty="bizSeq" resultType="long" order="BEFORE">
             SELECT SEQ_BIZ_CODE.NEXTVAL FROM DUAL
         </selectKey>
@@ -51,6 +55,8 @@
         , LEVEL_NO
         , NAME
         , DESCRIPTION
+        , SYS_CODE
+        , ORDER_NO
         , DEL_YN
         , REG_ID
         , REG_DT
@@ -60,6 +66,8 @@
         , #{levelNo,      jdbcType=INTEGER}
         , #{name,         jdbcType=VARCHAR}
         , #{description,  jdbcType=VARCHAR}
+        , #{sysCode,      jdbcType=VARCHAR}   <!-- ✅ 추가 -->
+        , #{orderNo,      jdbcType=INTEGER}
         , 'N'
         , #{regId,        jdbcType=VARCHAR}
         , SYSDATE
@@ -67,16 +75,18 @@
     </insert>
 
     <!-- 수정 -->
-    <update id="update" parameterType="com.smart.rms.architecture.model.TbBizCode">
+    <update id="update" parameterType="TbBizCode">
         UPDATE TB_BIZ_CODE
         SET MOD_DT = SYSDATE
         <if test="name != null">, NAME = #{name}</if>
         <if test="description != null">, DESCRIPTION = #{description}</if>
+        <if test="sysCode != null">, SYS_CODE = #{sysCode}</if> <!-- ✅ 추가 -->
+        <if test="orderNo != null">, ORDER_NO = #{orderNo}</if>
         <if test="modId != null">, MOD_ID = #{modId}</if>
         WHERE BIZ_SEQ = #{bizSeq}
     </update>
 
-    <!-- 삭제 (논리 삭제 처리) -->
+    <!-- 논리 삭제 -->
     <delete id="deleteById">
         UPDATE TB_BIZ_CODE
         SET DEL_YN = 'Y'
@@ -91,5 +101,38 @@
           AND DEL_YN = 'N'
     </select>
 
+    <!-- 정렬 순서 저장 -->
+    <update id="updateOrder" parameterType="TbBizCode">
+        UPDATE TB_BIZ_CODE
+        SET MOD_DT = SYSDATE
+          , MOD_ID = #{modId}
+          , ORDER_NO = #{orderNo, jdbcType=INTEGER}
+        WHERE BIZ_SEQ = #{bizSeq}
+    </update>
+
+    <select id="countBySysCode" resultType="int" parameterType="TbBizCode">
+        SELECT COUNT(*)
+        FROM TB_BIZ_CODE
+        WHERE SYS_CODE = #{sysCode}
+        AND DEL_YN = 'N'
+        <if test="bizSeq != null">
+            AND BIZ_SEQ != #{bizSeq}
+        </if>
+    </select>
+
+    <select id="findFlatSystemList" resultType="EgovMap">
+        SELECT C.BIZ_SEQ
+            , A.NAME                         AS DOMAIN_NAME  -- 1레벨
+            , B.NAME                         AS GROUP_NAME   -- 2레벨
+            , C.NAME                         AS SYSTEM_NAME  -- 3레벨
+            , C.SYS_CODE
+            , C.DESCRIPTION
+        FROM TB_BIZ_CODE C
+                 JOIN TB_BIZ_CODE B ON C.PARENT_SEQ = B.BIZ_SEQ
+                 JOIN TB_BIZ_CODE A ON B.PARENT_SEQ = A.BIZ_SEQ
+        WHERE C.LEVEL_NO = 3
+          AND C.DEL_YN = 'N'
+        ORDER BY A.ORDER_NO, B.ORDER_NO, C.ORDER_NO
+    </select>
 
 </mapper>
