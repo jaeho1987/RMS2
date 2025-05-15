@@ -5,15 +5,100 @@
 
 <mapper namespace="com.smart.rms.system.mapper.MenuMapper">
 
+    <!-- 메뉴 목록 -->
     <select id="selectMenusByUserId" resultType="com.smart.rms.system.model.TbMenu">
-        SELECT M.MENU_SEQ
+        SELECT
+            M.MENU_SEQ
              , M.MENU_NAME
              , M.PARENT_SEQ
              , M.MENU_PATH
              , M.MENU_ICON
              , M.MENU_ORDER
+             , M.DEL_YN
+             , M.REG_ID
+             , M.REG_DT
+             , M.MOD_ID
+             , M.MOD_DT
         FROM TB_MENU M
+        WHERE M.DEL_YN = 'N'
         ORDER BY M.PARENT_SEQ, M.MENU_ORDER
     </select>
+
+    <!-- 상세 조회 -->
+    <select id="findById" parameterType="long" resultType="com.smart.rms.system.model.TbMenu">
+        SELECT
+            MENU_SEQ
+             , PARENT_SEQ
+             , MENU_NAME
+             , MENU_PATH
+             , MENU_ICON
+             , MENU_ORDER
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+        FROM TB_MENU
+        WHERE MENU_SEQ = #{menuSeq}
+    </select>
+
+    <!-- 등록 -->
+    <insert id="insert" parameterType="com.smart.rms.system.model.TbMenu">
+        <selectKey resultType="long" keyProperty="menuSeq" order="BEFORE">
+            SELECT SEQ_MENU.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO TB_MENU (
+        MENU_SEQ
+        , PARENT_SEQ
+        , MENU_NAME
+        , MENU_PATH
+        , MENU_ICON
+        , MENU_ORDER
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        ) VALUES (
+        #{menuSeq}
+        , #{parentSeq}
+        , #{menuName}
+        , #{menuPath}
+        , #{menuIcon}
+        , #{menuOrder, jdbcType=INTEGER}
+        , #{delYn}
+        , #{regId}
+        , SYSDATE
+        )
+    </insert>
+
+    <!-- 수정 -->
+    <update id="update" parameterType="com.smart.rms.system.model.TbMenu">
+        UPDATE TB_MENU
+        SET MOD_DT = SYSDATE
+        , MOD_ID = #{modId}
+        <if test="menuName != null">, MENU_NAME = #{menuName}</if>
+        <if test="menuPath != null">, MENU_PATH = #{menuPath}</if>
+        <if test="menuIcon != null">, MENU_ICON = #{menuIcon}</if>
+        <if test="menuOrder != null">, MENU_ORDER = #{menuOrder, jdbcType=INTEGER}</if>
+        <if test="parentSeq != null">, PARENT_SEQ = #{parentSeq}</if>
+        WHERE MENU_SEQ = #{menuSeq}
+    </update>
+
+    <!-- 논리 삭제 -->
+    <update id="deleteById">
+        UPDATE TB_MENU
+        SET MOD_DT = SYSDATE
+          , MOD_ID = #{modId}
+          , DEL_YN = 'Y'
+        WHERE MENU_SEQ = #{menuSeq}
+    </update>
+
+    <!-- 정렬 순서 일괄 저장용 -->
+    <update id="updateMenuOrder">
+        UPDATE TB_MENU
+        SET MOD_DT = SYSDATE
+          , MOD_ID = #{modId}
+          , MENU_ORDER = #{menuOrder, jdbcType=INTEGER}
+        WHERE MENU_SEQ = #{menuSeq}
+    </update>
 
 </mapper>
