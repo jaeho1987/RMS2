@@ -5,6 +5,7 @@ import com.smart.rms.architecture.model.TbBizCode;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BizCodeService {
@@ -42,5 +43,18 @@ public class BizCodeService {
             throw new IllegalStateException("하위 항목이 존재하여 삭제할 수 없습니다.");
         }
         return bizCodeMapper.deleteById(id);
+    }
+
+    public void updateOrder(List<TbBizCode> list, String modId) {
+        for (TbBizCode code : list) {
+            code.setModId(modId);
+            bizCodeMapper.updateOrder(code);
+        }
+    }
+    public boolean isSysCodeExists(TbBizCode code) {
+        return bizCodeMapper.countBySysCode(code) > 0;
+    }
+    public List<Map<String, Object>> findFlatSystemList() {
+        return bizCodeMapper.findFlatSystemList();
     }
 }

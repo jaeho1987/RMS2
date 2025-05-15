@@ -15,6 +15,8 @@ public class TbBizCode {
     private Integer levelNo;
     private String name;
     private String description;
+    private Integer orderNo; // ✅ 정렬 순서 추가
+    private String sysCode;
     private String delYn;
     private String regId;
     private String modId;

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smart.rms.system.mapper.CommonCodeMapper">
+
+    <select id="findByKeyword" parameterType="com.smart.rms.system.model.TbCommonCode" resultType="com.smart.rms.system.model.TbCommonCode">
+        SELECT
+        CODE_SEQ
+        , CODE_GROUP
+        , CODE_ID
+        , CODE_NAME
+        , PARENT_SEQ
+        , SORT_ORDER
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        , MOD_ID
+        , MOD_DT
+        FROM TB_COMMON_CODE
+        WHERE DEL_YN = 'N'
+        <if test="codeGroup != null and codeGroup != ''">
+            AND CODE_GROUP LIKE '%' || #{codeGroup} || '%'
+        </if>
+        <if test="codeName != null and codeName != ''">
+            AND CODE_NAME  LIKE '%' || #{codeName}  || '%'
+        </if>
+        ORDER BY PARENT_SEQ NULLS FIRST
+        , SORT_ORDER NULLS LAST
+        , CODE_SEQ
+    </select>
+
+    <select id="findById" parameterType="long" resultType="com.smart.rms.system.model.TbCommonCode">
+        SELECT
+            CODE_SEQ
+             , CODE_GROUP
+             , CODE_ID
+             , CODE_NAME
+             , PARENT_SEQ
+             , SORT_ORDER
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+        FROM TB_COMMON_CODE
+        WHERE CODE_SEQ = #{codeSeq}
+          AND DEL_YN = 'N'
+    </select>
+
+    <insert id="insert" parameterType="com.smart.rms.system.model.TbCommonCode">
+        <selectKey keyProperty="codeSeq" resultType="long" order="BEFORE">
+            SELECT SEQ_COMMON_CODE.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO TB_COMMON_CODE
+        (
+        CODE_SEQ
+        , CODE_GROUP
+        , CODE_ID
+        , CODE_NAME
+        , PARENT_SEQ
+        , SORT_ORDER
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        )
+        VALUES
+        (
+        #{codeSeq,    jdbcType=NUMERIC}
+        , #{codeGroup,  jdbcType=VARCHAR}
+        , #{codeId,     jdbcType=VARCHAR}
+        , #{codeName,   jdbcType=VARCHAR}
+        , #{parentSeq,  jdbcType=NUMERIC}
+        , #{sortOrder,  jdbcType=NUMERIC}
+        , 'N'
+        , #{regId,      jdbcType=VARCHAR}
+        , SYSDATE
+        )
+    </insert>
+
+    <update id="update" parameterType="com.smart.rms.system.model.TbCommonCode">
+        UPDATE TB_COMMON_CODE
+        SET   MOD_DT = SYSDATE
+        <if test="codeGroup != null"> , CODE_GROUP = #{codeGroup, jdbcType=VARCHAR} </if>
+        <if test="codeId != null">    , CODE_ID    = #{codeId,    jdbcType=VARCHAR} </if>
+        <if test="codeName != null">  , CODE_NAME  = #{codeName,  jdbcType=VARCHAR} </if>
+        <if test="parentSeq != null"> , PARENT_SEQ = #{parentSeq, jdbcType=NUMERIC} </if>
+        <if test="sortOrder != null"> , SORT_ORDER = #{sortOrder, jdbcType=NUMERIC} </if>
+        <if test="modId != null">     , MOD_ID     = #{modId,     jdbcType=VARCHAR} </if>
+        WHERE CODE_SEQ = #{codeSeq, jdbcType=NUMERIC}
+        AND DEL_YN = 'N'
+    </update>
+
+    <update id="deleteById" parameterType="long">
+        UPDATE TB_COMMON_CODE
+        SET   DEL_YN = 'Y'
+          , MOD_DT = SYSDATE
+        WHERE CODE_SEQ = #{codeSeq, jdbcType=NUMERIC}
+    </update>
+
+    <update id="updateOrderOne" parameterType="com.smart.rms.system.model.TbCommonCode">
+        UPDATE TB_COMMON_CODE
+        SET   SORT_ORDER = #{sortOrder, jdbcType=NUMERIC}
+          , MOD_ID     = #{modId,     jdbcType=VARCHAR}
+          , MOD_DT     = SYSDATE
+        WHERE CODE_SEQ   = #{codeSeq,   jdbcType=NUMERIC}
+    </update>
+
+    <select id="findAllActive" resultType="com.smart.rms.system.model.TbCommonCode">
+        SELECT
+            CODE_SEQ
+             , CODE_GROUP
+             , CODE_ID
+             , CODE_NAME
+        FROM TB_COMMON_CODE
+        WHERE DEL_YN = 'N'
+        ORDER BY CODE_GROUP, SORT_ORDER
+    </select>
+
+</mapper>

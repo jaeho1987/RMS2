@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smart.rms.architecture.mapper.RequirementMapper">
+
+    <select id="findByCondition" parameterType="TbRequirement" resultType="TbRequirement">
+        SELECT
+        REQ_SEQ
+        , BIZ_SEQ
+        , REQ_ID
+        , REQ_NAME
+        , REQ_DESC
+        , REQ_TYPE_CODE
+        , PRIORITY_CODE
+        , STATUS_CODE
+        , PARENT_SEQ
+        , OWNER_ID
+        , PLAN_START_DT
+        , PLAN_END_DT
+        , ACT_START_DT
+        , ACT_END_DT
+        , ORDER_NO
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        , MOD_ID
+        , MOD_DT
+        FROM TB_REQUIREMENT
+        WHERE DEL_YN = 'N'
+        <if test="bizSeq != null">
+            AND BIZ_SEQ = #{bizSeq}
+        </if>
+        ORDER BY PARENT_SEQ NULLS FIRST, ORDER_NO NULLS LAST, REQ_SEQ
+    </select>
+
+    <select id="findById" parameterType="long" resultType="TbRequirement">
+        SELECT
+            REQ_SEQ
+             , BIZ_SEQ
+             , REQ_ID
+             , REQ_NAME
+             , REQ_DESC
+             , REQ_TYPE_CODE
+             , PRIORITY_CODE
+             , STATUS_CODE
+             , PARENT_SEQ
+             , OWNER_ID
+             , PLAN_START_DT
+             , PLAN_END_DT
+             , ACT_START_DT
+             , ACT_END_DT
+             , ORDER_NO
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+        FROM TB_REQUIREMENT
+        WHERE REQ_SEQ = #{reqSeq}
+          AND DEL_YN = 'N'
+    </select>
+
+    <insert id="insert" parameterType="TbRequirement">
+        <selectKey keyProperty="reqSeq" resultType="long" order="BEFORE">
+            SELECT SEQ_REQUIREMENT.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO TB_REQUIREMENT (
+        REQ_SEQ
+        , BIZ_SEQ
+        , REQ_ID
+        , REQ_NAME
+        , REQ_DESC
+        , REQ_TYPE_CODE
+        , PRIORITY_CODE
+        , STATUS_CODE
+        , PARENT_SEQ
+        , OWNER_ID
+        , PLAN_START_DT
+        , PLAN_END_DT
+        , ACT_START_DT
+        , ACT_END_DT
+        , ORDER_NO
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        ) VALUES (
+        #{reqSeq, jdbcType=NUMERIC}
+        , #{bizSeq, jdbcType=NUMERIC}
+        , 'REQ-' || #{sysCode, jdbcType=VARCHAR} || '-' || LPAD(FN_NEXT_SEQ('REQ', #{sysCode, jdbcType=VARCHAR}, '-'), 4, '0')
+        , #{reqName, jdbcType=VARCHAR}
+        , #{reqDesc, jdbcType=VARCHAR}
+        , #{reqTypeCode, jdbcType=NUMERIC}
+        , #{priorityCode, jdbcType=NUMERIC}
+        , #{statusCode, jdbcType=NUMERIC}
+        , #{parentSeq, jdbcType=NUMERIC}
+        , #{ownerId, jdbcType=VARCHAR}
+        , #{planStartDt, jdbcType=TIMESTAMP}
+        , #{planEndDt, jdbcType=TIMESTAMP}
+        , #{actStartDt, jdbcType=TIMESTAMP}
+        , #{actEndDt, jdbcType=TIMESTAMP}
+        , #{orderNo, jdbcType=NUMERIC}
+        , 'N'
+        , #{regId, jdbcType=VARCHAR}
+        , SYSDATE
+        )
+    </insert>
+
+    <update id="update" parameterType="TbRequirement">
+        UPDATE TB_REQUIREMENT
+        SET MOD_DT = SYSDATE
+        <if test="reqName != null">        , REQ_NAME = #{reqName} </if>
+        <if test="reqDesc != null">        , REQ_DESC = #{reqDesc} </if>
+        <if test="reqTypeCode != null">    , REQ_TYPE_CODE = #{reqTypeCode} </if>
+        <if test="priorityCode != null">   , PRIORITY_CODE = #{priorityCode} </if>
+        <if test="statusCode != null">     , STATUS_CODE = #{statusCode} </if>
+        <if test="ownerId != null">        , OWNER_ID = #{ownerId} </if>
+        <if test="planStartDt != null">    , PLAN_START_DT = #{planStartDt} </if>
+        <if test="planEndDt != null">      , PLAN_END_DT = #{planEndDt} </if>
+        <if test="actStartDt != null">     , ACT_START_DT = #{actStartDt} </if>
+        <if test="actEndDt != null">       , ACT_END_DT = #{actEndDt} </if>
+        <if test="orderNo != null">        , ORDER_NO = #{orderNo} </if>
+        <if test="modId != null">          , MOD_ID = #{modId} </if>
+        <if test="bizSeq != null">         , BIZ_SEQ = #{bizSeq} </if> <!-- ✅ 변경 -->
+        WHERE REQ_SEQ = #{reqSeq}
+        AND DEL_YN = 'N'
+    </update>
+
+    <update id="deleteById" parameterType="long">
+        UPDATE TB_REQUIREMENT
+        SET DEL_YN = 'Y'
+          , MOD_DT = SYSDATE
+        WHERE REQ_SEQ = #{reqSeq}
+    </update>
+
+    <update id="updateOrderOne" parameterType="TbRequirement">
+        UPDATE TB_REQUIREMENT
+        SET ORDER_NO = #{orderNo}
+          , MOD_ID = #{modId}
+          , MOD_DT = SYSDATE
+        WHERE REQ_SEQ = #{reqSeq}
+    </update>
+</mapper>

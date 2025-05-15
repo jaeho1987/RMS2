@@ -3,10 +3,9 @@ package com.smart.rms.system.controller;
 import com.smart.rms.system.model.TbMenu;
 import com.smart.rms.system.service.MenuService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,7 +18,42 @@ public class MenuController {
 
     @GetMapping
     public List<TbMenu> getMenus(Authentication authentication) {
-        String userId = authentication.getName(); // Spring Security에서 로그인된 사용자 ID
-        return menuService.getMenusByUserId(userId);
+        return menuService.getMenusByUserId(authentication.getName());
+    }
+
+    @GetMapping("/{menuSeq}")
+    public TbMenu getMenu(@PathVariable Long menuSeq) {
+        return menuService.getMenuById(menuSeq);
+    }
+
+    @PostMapping
+    public ResponseEntity<TbMenu> createMenu(@RequestBody TbMenu tbMenu, Authentication authentication) {
+        tbMenu.setRegId(authentication.getName());
+        tbMenu.setDelYn("N");
+        menuService.createMenu(tbMenu);
+        return ResponseEntity.ok(tbMenu);
+    }
+
+    @PutMapping("/{menuSeq}")
+    public ResponseEntity<Void> updateMenu(@PathVariable Long menuSeq,
+                                           @RequestBody TbMenu tbMenu,
+                                           Authentication authentication) {
+        tbMenu.setMenuSeq(menuSeq);
+        tbMenu.setModId(authentication.getName());
+        menuService.updateMenu(tbMenu);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{menuSeq}")
+    public ResponseEntity<Void> deleteMenu(@PathVariable Long menuSeq, Authentication authentication) {
+        menuService.deleteMenu(menuSeq, authentication.getName());
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/order")
+    public ResponseEntity<Void> updateMenuOrders(@RequestBody List<TbMenu> menus,
+                                                 Authentication authentication) {
+        menuService.updateMenuOrders(menus, authentication.getName());
+        return ResponseEntity.ok().build();
     }
 }
