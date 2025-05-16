@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.smart.rms.architecture.mapper.RequirementMapper">
 
+    <!-- 조건 검색 -->
     <select id="findByCondition" parameterType="TbRequirement" resultType="TbRequirement">
         SELECT
         REQ_SEQ
@@ -33,36 +36,38 @@
         ORDER BY PARENT_SEQ NULLS FIRST, ORDER_NO NULLS LAST, REQ_SEQ
     </select>
 
+    <!-- 단건 조회 -->
     <select id="findById" parameterType="long" resultType="TbRequirement">
         SELECT
-            REQ_SEQ
-             , BIZ_SEQ
-             , REQ_ID
-             , REQ_NAME
-             , REQ_DESC
-             , REQ_TYPE_CODE
-             , PRIORITY_CODE
-             , STATUS_CODE
-             , PARENT_SEQ
-             , OWNER_ID
-             , PLAN_START_DT
-             , PLAN_END_DT
-             , ACT_START_DT
-             , ACT_END_DT
-             , ORDER_NO
-             , DEL_YN
-             , REG_ID
-             , REG_DT
-             , MOD_ID
-             , MOD_DT
+        REQ_SEQ
+        , BIZ_SEQ
+        , REQ_ID
+        , REQ_NAME
+        , REQ_DESC
+        , REQ_TYPE_CODE
+        , PRIORITY_CODE
+        , STATUS_CODE
+        , PARENT_SEQ
+        , OWNER_ID
+        , PLAN_START_DT
+        , PLAN_END_DT
+        , ACT_START_DT
+        , ACT_END_DT
+        , ORDER_NO
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        , MOD_ID
+        , MOD_DT
         FROM TB_REQUIREMENT
         WHERE REQ_SEQ = #{reqSeq}
-          AND DEL_YN = 'N'
+        AND DEL_YN = 'N'
     </select>
 
+    <!-- 등록 -->
     <insert id="insert" parameterType="TbRequirement">
         <selectKey keyProperty="reqSeq" resultType="long" order="BEFORE">
-            SELECT SEQ_REQUIREMENT.NEXTVAL FROM DUAL
+            SELECT nextval('seq_requirement')
         </selectKey>
         INSERT INTO TB_REQUIREMENT (
         REQ_SEQ
@@ -84,30 +89,31 @@
         , REG_ID
         , REG_DT
         ) VALUES (
-        #{reqSeq, jdbcType=NUMERIC}
-        , #{bizSeq, jdbcType=NUMERIC}
-        , 'REQ-' || #{sysCode, jdbcType=VARCHAR} || '-' || LPAD(FN_NEXT_SEQ('REQ', #{sysCode, jdbcType=VARCHAR}, '-'), 4, '0')
+        #{reqSeq, jdbcType=BIGINT}
+        , #{bizSeq, jdbcType=BIGINT}
+        , 'REQ-' || #{sysCode, jdbcType=VARCHAR} || '-' || LPAD(fn_next_seq('REQ', #{sysCode, jdbcType=VARCHAR}, '-'), 4, '0')
         , #{reqName, jdbcType=VARCHAR}
         , #{reqDesc, jdbcType=VARCHAR}
-        , #{reqTypeCode, jdbcType=NUMERIC}
-        , #{priorityCode, jdbcType=NUMERIC}
-        , #{statusCode, jdbcType=NUMERIC}
-        , #{parentSeq, jdbcType=NUMERIC}
+        , #{reqTypeCode, jdbcType=VARCHAR}
+        , #{priorityCode, jdbcType=VARCHAR}
+        , #{statusCode, jdbcType=VARCHAR}
+        , #{parentSeq, jdbcType=BIGINT}
         , #{ownerId, jdbcType=VARCHAR}
         , #{planStartDt, jdbcType=TIMESTAMP}
         , #{planEndDt, jdbcType=TIMESTAMP}
         , #{actStartDt, jdbcType=TIMESTAMP}
         , #{actEndDt, jdbcType=TIMESTAMP}
-        , #{orderNo, jdbcType=NUMERIC}
+        , #{orderNo, jdbcType=INTEGER}
         , 'N'
         , #{regId, jdbcType=VARCHAR}
-        , SYSDATE
+        , CURRENT_TIMESTAMP
         )
     </insert>
 
+    <!-- 수정 -->
     <update id="update" parameterType="TbRequirement">
         UPDATE TB_REQUIREMENT
-        SET MOD_DT = SYSDATE
+        SET MOD_DT = CURRENT_TIMESTAMP
         <if test="reqName != null">        , REQ_NAME = #{reqName} </if>
         <if test="reqDesc != null">        , REQ_DESC = #{reqDesc} </if>
         <if test="reqTypeCode != null">    , REQ_TYPE_CODE = #{reqTypeCode} </if>
@@ -120,23 +126,26 @@
         <if test="actEndDt != null">       , ACT_END_DT = #{actEndDt} </if>
         <if test="orderNo != null">        , ORDER_NO = #{orderNo} </if>
         <if test="modId != null">          , MOD_ID = #{modId} </if>
-        <if test="bizSeq != null">         , BIZ_SEQ = #{bizSeq} </if> <!-- ✅ 변경 -->
+        <if test="bizSeq != null">         , BIZ_SEQ = #{bizSeq} </if>
         WHERE REQ_SEQ = #{reqSeq}
         AND DEL_YN = 'N'
     </update>
 
+    <!-- 논리 삭제 -->
     <update id="deleteById" parameterType="long">
         UPDATE TB_REQUIREMENT
         SET DEL_YN = 'Y'
-          , MOD_DT = SYSDATE
+        , MOD_DT = CURRENT_TIMESTAMP
         WHERE REQ_SEQ = #{reqSeq}
     </update>
 
+    <!-- 정렬 순서 수정 -->
     <update id="updateOrderOne" parameterType="TbRequirement">
         UPDATE TB_REQUIREMENT
         SET ORDER_NO = #{orderNo}
-          , MOD_ID = #{modId}
-          , MOD_DT = SYSDATE
+        , MOD_ID = #{modId}
+        , MOD_DT = CURRENT_TIMESTAMP
         WHERE REQ_SEQ = #{reqSeq}
     </update>
+
 </mapper>

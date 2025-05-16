@@ -2,8 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.smart.rms.system.mapper.CommonCodeMapper">
 
+    <!-- 키워드 검색 -->
     <select id="findByKeyword" parameterType="com.smart.rms.system.model.TbCommonCode" resultType="com.smart.rms.system.model.TbCommonCode">
         SELECT
         CODE_SEQ
@@ -25,35 +27,12 @@
         <if test="codeName != null and codeName != ''">
             AND CODE_NAME  LIKE '%' || #{codeName}  || '%'
         </if>
-        ORDER BY PARENT_SEQ NULLS FIRST
-        , SORT_ORDER NULLS LAST
-        , CODE_SEQ
+        ORDER BY PARENT_SEQ NULLS FIRST, SORT_ORDER NULLS LAST, CODE_SEQ
     </select>
 
+    <!-- 단건 조회 -->
     <select id="findById" parameterType="long" resultType="com.smart.rms.system.model.TbCommonCode">
         SELECT
-            CODE_SEQ
-             , CODE_GROUP
-             , CODE_ID
-             , CODE_NAME
-             , PARENT_SEQ
-             , SORT_ORDER
-             , DEL_YN
-             , REG_ID
-             , REG_DT
-             , MOD_ID
-             , MOD_DT
-        FROM TB_COMMON_CODE
-        WHERE CODE_SEQ = #{codeSeq}
-          AND DEL_YN = 'N'
-    </select>
-
-    <insert id="insert" parameterType="com.smart.rms.system.model.TbCommonCode">
-        <selectKey keyProperty="codeSeq" resultType="long" order="BEFORE">
-            SELECT SEQ_COMMON_CODE.NEXTVAL FROM DUAL
-        </selectKey>
-        INSERT INTO TB_COMMON_CODE
-        (
         CODE_SEQ
         , CODE_GROUP
         , CODE_ID
@@ -63,9 +42,29 @@
         , DEL_YN
         , REG_ID
         , REG_DT
-        )
-        VALUES
-        (
+        , MOD_ID
+        , MOD_DT
+        FROM TB_COMMON_CODE
+        WHERE CODE_SEQ = #{codeSeq}
+        AND DEL_YN = 'N'
+    </select>
+
+    <!-- 등록 -->
+    <insert id="insert" parameterType="com.smart.rms.system.model.TbCommonCode">
+        <selectKey keyProperty="codeSeq" resultType="long" order="BEFORE">
+            SELECT nextval('seq_common_code')
+        </selectKey>
+        INSERT INTO TB_COMMON_CODE (
+        CODE_SEQ
+        , CODE_GROUP
+        , CODE_ID
+        , CODE_NAME
+        , PARENT_SEQ
+        , SORT_ORDER
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        ) VALUES (
         #{codeSeq,    jdbcType=NUMERIC}
         , #{codeGroup,  jdbcType=VARCHAR}
         , #{codeId,     jdbcType=VARCHAR}
@@ -74,13 +73,14 @@
         , #{sortOrder,  jdbcType=NUMERIC}
         , 'N'
         , #{regId,      jdbcType=VARCHAR}
-        , SYSDATE
+        , CURRENT_TIMESTAMP
         )
     </insert>
 
+    <!-- 수정 -->
     <update id="update" parameterType="com.smart.rms.system.model.TbCommonCode">
         UPDATE TB_COMMON_CODE
-        SET   MOD_DT = SYSDATE
+        SET MOD_DT = CURRENT_TIMESTAMP
         <if test="codeGroup != null"> , CODE_GROUP = #{codeGroup, jdbcType=VARCHAR} </if>
         <if test="codeId != null">    , CODE_ID    = #{codeId,    jdbcType=VARCHAR} </if>
         <if test="codeName != null">  , CODE_NAME  = #{codeName,  jdbcType=VARCHAR} </if>
@@ -91,27 +91,30 @@
         AND DEL_YN = 'N'
     </update>
 
+    <!-- 논리 삭제 -->
     <update id="deleteById" parameterType="long">
         UPDATE TB_COMMON_CODE
-        SET   DEL_YN = 'Y'
-          , MOD_DT = SYSDATE
+        SET DEL_YN = 'Y'
+        , MOD_DT = CURRENT_TIMESTAMP
         WHERE CODE_SEQ = #{codeSeq, jdbcType=NUMERIC}
     </update>
 
+    <!-- 정렬 순서 수정 -->
     <update id="updateOrderOne" parameterType="com.smart.rms.system.model.TbCommonCode">
         UPDATE TB_COMMON_CODE
-        SET   SORT_ORDER = #{sortOrder, jdbcType=NUMERIC}
-          , MOD_ID     = #{modId,     jdbcType=VARCHAR}
-          , MOD_DT     = SYSDATE
-        WHERE CODE_SEQ   = #{codeSeq,   jdbcType=NUMERIC}
+        SET SORT_ORDER = #{sortOrder, jdbcType=NUMERIC}
+        , MOD_ID     = #{modId,     jdbcType=VARCHAR}
+        , MOD_DT     = CURRENT_TIMESTAMP
+        WHERE CODE_SEQ = #{codeSeq, jdbcType=NUMERIC}
     </update>
 
+    <!-- 전체 활성 코드 조회 -->
     <select id="findAllActive" resultType="com.smart.rms.system.model.TbCommonCode">
         SELECT
-            CODE_SEQ
-             , CODE_GROUP
-             , CODE_ID
-             , CODE_NAME
+        CODE_SEQ
+        , CODE_GROUP
+        , CODE_ID
+        , CODE_NAME
         FROM TB_COMMON_CODE
         WHERE DEL_YN = 'N'
         ORDER BY CODE_GROUP, SORT_ORDER

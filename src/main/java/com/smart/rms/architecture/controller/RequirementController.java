@@ -1,10 +1,14 @@
 package com.smart.rms.architecture.controller;
+
 import com.smart.rms.architecture.model.TbRequirement;
 import com.smart.rms.architecture.service.RequirementService;
+import com.smart.rms.util.ApiUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/requirement")
@@ -25,29 +29,28 @@ public class RequirementController {
         return service.findById(id);
     }
 
-    // 등록
     @PostMapping
-    public long insert(@RequestBody TbRequirement req) {
-        service.insert(req);
-        return req.getReqSeq();
+    public ResponseEntity<?> insert(@RequestBody TbRequirement req) {
+        TbRequirement result = service.insert(req);
+        return ApiUtil.success(result);
     }
 
-    // 수정
     @PutMapping("/{id}")
-    public int update(@PathVariable Long id, @RequestBody TbRequirement req) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody TbRequirement req) {
         req.setReqSeq(id);
-        return service.update(req);
+        int result = service.update(req);
+        return ApiUtil.success(result);  // 수정된 건수 또는 reqSeq 등
     }
 
-    // 삭제 (논리 삭제)
     @DeleteMapping("/{id}")
-    public int delete(@PathVariable Long id) {
-        return service.deleteById(id);
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        int result = service.deleteById(id);
+        return ApiUtil.success(result);  // 삭제된 건수
     }
 
-    // 정렬 순서 저장
     @PutMapping("/order")
-    public int updateOrderBatch(@RequestBody List<TbRequirement> list) {
-        return service.updateOrderBatch(list);
+    public ResponseEntity<?> updateOrderBatch(@RequestBody List<TbRequirement> list) {
+        int result = service.updateOrderBatch(list);
+        return ApiUtil.success(result);  // 성공 건수
     }
 }
