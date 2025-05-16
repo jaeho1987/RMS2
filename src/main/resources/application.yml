@@ -1,32 +1,27 @@
 server:
-  port: 8080  # 원하는 포트로 수정 가능
+  port: 8080
 
 spring:
-#  jackson:
-#    default-property-inclusion: always
   datasource:
-    driver-class-name: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@218.48.123.111:1522/XEPDB1  # 실제 오라클 서비스명에 맞게 수정
-    username: rms
-    password: Rms123!
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/rms?currentSchema=rms
+    username: postgres
+    password: rms!#24
 
-# MyBatis 설정
 mybatis:
   configuration:
-    map-underscore-to-camel-case: true       # user_id → userId 자동 매핑
-    cache-enabled: false                     # 캐시 필요 시 true
+    map-underscore-to-camel-case: true
+    cache-enabled: false
     default-fetch-size: 100
     default-statement-timeout: 30
   type-aliases-package: com.smart.rms.system.model, com.smart.rms.architecture.model, com.smart.rms.common.map
-  mapper-locations: classpath:mapper/**/*.xml # Mapper XML 위치
+  mapper-locations: classpath:mapper/**/*.xml
 
 logging:
   level:
     root: info
-    com.smart.rms: debug  # 필요한 경우 디버그 로그 확인
-    org.mybatis: debug    # MyBatis SQL 로그 보기
+    com.smart.rms: debug
+    org.mybatis: debug
     org.springframework.boot.autoconfigure.security: DEBUG
     org.springframework.security: DEBUG
     org.springframework.web: INFO
-
-

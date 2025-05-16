@@ -25,13 +25,11 @@
 	</properties>
 
 	<dependencies>
-		<!-- Oracle JDBC driver (ojdbc11 수동 등록) -->
+		<!-- ✅ PostgreSQL JDBC Driver -->
 		<dependency>
-			<groupId>com.oracle.ojdbc</groupId>
-			<artifactId>ojdbc11</artifactId>
-			<version>21.3.0.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/ojdbc11.jar</systemPath>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.6.0</version>
 		</dependency>
 
 		<!-- Spring Boot starters -->

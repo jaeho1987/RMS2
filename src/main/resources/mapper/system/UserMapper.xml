@@ -7,37 +7,90 @@
 
     <!-- 모든 사용자 조회 -->
     <select id="findAll" resultType="com.smart.rms.system.model.TbUser">
-        SELECT USER_ID, USER_NAME, TEL_NO, ADDRESS, EMAIL
+        SELECT
+            USER_ID
+             , USER_NAME
+             , EMAIL
+             , ROLE
+             , COMPANY_SEQ
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
         FROM TB_USERS
+        WHERE DEL_YN = 'N'
+        ORDER BY USER_NAME
     </select>
 
     <!-- ID로 사용자 조회 -->
-    <select id="findById" parameterType="String" resultType="com.smart.rms.system.model.TbUser">
-        SELECT USER_ID, USER_NAME, TEL_NO, ADDRESS, EMAIL
+    <select id="findById" parameterType="long" resultType="com.smart.rms.system.model.TbUser">
+        SELECT
+            USER_ID
+             , USER_NAME
+             , EMAIL
+             , PASSWORD
+             , ROLE
+             , COMPANY_SEQ
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
         FROM TB_USERS
         WHERE USER_ID = #{userId}
+          AND DEL_YN = 'N'
     </select>
 
     <!-- 사용자 등록 -->
     <insert id="save" parameterType="com.smart.rms.system.model.TbUser">
-        INSERT INTO TB_USERS (USER_ID, USER_NAME, TEL_NO, ADDRESS, EMAIL)
-        VALUES (#{userId}, #{userName}, #{telNo}, #{address}, #{email})
+        <selectKey keyProperty="userId" resultType="String" order="BEFORE">
+            SELECT nextval('seq_users')
+        </selectKey>
+        INSERT INTO TB_USERS (
+        USER_ID
+        , USER_NAME
+        , EMAIL
+        , PASSWORD
+        , ROLE
+        , COMPANY_SEQ
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        ) VALUES (
+        #{userId}
+        , #{userName}
+        , #{email}
+        , #{password}
+        , #{role}
+        , #{companySeq}
+        , 'N'
+        , #{regId}
+        , CURRENT_TIMESTAMP
+        )
     </insert>
 
     <!-- 사용자 수정 -->
     <update id="update" parameterType="com.smart.rms.system.model.TbUser">
         UPDATE TB_USERS
-        SET USER_NAME = #{userName},
-        TEL_NO = #{telNo},
-        ADDRESS = #{address},
-        EMAIL = #{email}
+        SET MOD_DT = CURRENT_TIMESTAMP
+        <if test="userName != null">, USER_NAME = #{userName}</if>
+        <if test="email != null">, EMAIL = #{email}</if>
+        <if test="password != null">, PASSWORD = #{password}</if>
+        <if test="role != null">, ROLE = #{role}</if>
+        <if test="companySeq != null">, COMPANY_SEQ = #{companySeq}</if>
+        <if test="modId != null">, MOD_ID = #{modId}</if>
         WHERE USER_ID = #{userId}
+        AND DEL_YN = 'N'
     </update>
 
-    <!-- 사용자 삭제 -->
-    <delete id="deleteById" parameterType="String">
-        DELETE FROM TB_USERS
+    <!-- 사용자 논리 삭제 -->
+    <update id="deleteById" parameterType="long">
+        UPDATE TB_USERS
+        SET DEL_YN = 'Y'
+          , MOD_ID = 'system'
+          , MOD_DT = CURRENT_TIMESTAMP
         WHERE USER_ID = #{userId}
-    </delete>
+    </update>
 
 </mapper>

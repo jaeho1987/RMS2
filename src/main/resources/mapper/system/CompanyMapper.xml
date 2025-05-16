@@ -5,51 +5,54 @@
 
 <mapper namespace="com.smart.rms.system.mapper.CompanyMapper">
 
+    <!-- 전체 조회 -->
     <select id="findAll" resultType="com.smart.rms.system.model.TbCompany">
         SELECT COMPANY_SEQ
-             , COMPANY_NAME
-             , BIZ_NO
-             , BIZ_TYPE
-             , BIZ_CONDITION
-             , TEL_NO
-             , EMAIL
-             , ZIP_CODE
-             , ADDRESS
-             , DESCRIPTION
-             , DEL_YN
-             , REG_ID
-             , REG_DT
-             , MOD_ID
-             , MOD_DT
+        , COMPANY_NAME
+        , BIZ_NO
+        , BIZ_TYPE
+        , BIZ_CONDITION
+        , TEL_NO
+        , EMAIL
+        , ZIP_CODE
+        , ADDRESS
+        , DESCRIPTION
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        , MOD_ID
+        , MOD_DT
         FROM TB_COMPANY
         WHERE 1=1
-          AND DEL_YN = 'N'
+        AND DEL_YN = 'N'
         ORDER BY COMPANY_NAME ASC
     </select>
 
+    <!-- 단건 조회 -->
     <select id="findById" resultType="com.smart.rms.system.model.TbCompany">
         SELECT COMPANY_SEQ
-             , COMPANY_NAME
-             , BIZ_NO
-             , BIZ_TYPE
-             , BIZ_CONDITION
-             , TEL_NO
-             , EMAIL
-             , ZIP_CODE
-             , ADDRESS
-             , DESCRIPTION
-             , DEL_YN
-             , REG_ID
-             , REG_DT
-             , MOD_ID
-             , MOD_DT
+        , COMPANY_NAME
+        , BIZ_NO
+        , BIZ_TYPE
+        , BIZ_CONDITION
+        , TEL_NO
+        , EMAIL
+        , ZIP_CODE
+        , ADDRESS
+        , DESCRIPTION
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        , MOD_ID
+        , MOD_DT
         FROM TB_COMPANY
         WHERE COMPANY_SEQ = #{companySeq}
     </select>
 
+    <!-- 등록 -->
     <insert id="save" parameterType="com.smart.rms.system.model.TbCompany">
         <selectKey keyProperty="companySeq" resultType="long" order="BEFORE">
-            SELECT SEQ_COMPANY.NEXTVAL FROM DUAL
+            SELECT nextval('seq_company')
         </selectKey>
 
         INSERT INTO TB_COMPANY (
@@ -66,8 +69,7 @@
         , DEL_YN
         , REG_ID
         , REG_DT
-        )
-        VALUES (
+        ) VALUES (
         #{companySeq}
         , #{companyName}
         , #{bizNo}
@@ -80,13 +82,14 @@
         , #{description}
         , 'N'
         , #{regId}
-        , SYSDATE
+        , CURRENT_TIMESTAMP
         )
     </insert>
 
+    <!-- 수정 -->
     <update id="update" parameterType="com.smart.rms.system.model.TbCompany">
         UPDATE TB_COMPANY
-        SET MOD_DT = SYSDATE
+        SET MOD_DT = CURRENT_TIMESTAMP
         <if test="companyName != null">
             , COMPANY_NAME = #{companyName, jdbcType=VARCHAR}
         </if>
@@ -120,12 +123,12 @@
         WHERE COMPANY_SEQ = #{companySeq, jdbcType=NUMERIC}
     </update>
 
-
+    <!-- 삭제 -->
     <update id="deleteById">
         UPDATE TB_COMPANY
         SET DEL_YN = 'Y'
-          , MOD_ID = 'system'
-          , MOD_DT = SYSDATE
+        , MOD_ID = 'system'
+        , MOD_DT = CURRENT_TIMESTAMP
         WHERE COMPANY_SEQ = #{companySeq}
     </update>
 
