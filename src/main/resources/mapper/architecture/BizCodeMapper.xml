@@ -8,18 +8,18 @@
     <!-- 전체 조회 -->
     <select id="findAll" resultType="TbBizCode">
         SELECT
-            BIZ_SEQ
-             , PARENT_SEQ
-             , LEVEL_NO
-             , NAME
-             , DESCRIPTION
-             , SYS_CODE
-             , ORDER_NO
-             , DEL_YN
-             , REG_ID
-             , REG_DT
-             , MOD_ID
-             , MOD_DT
+        BIZ_SEQ
+        , PARENT_SEQ
+        , LEVEL_NO
+        , NAME
+        , DESCRIPTION
+        , SYS_CODE
+        , ORDER_NO
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        , MOD_ID
+        , MOD_DT
         FROM TB_BIZ_CODE
         WHERE DEL_YN = 'N'
         ORDER BY LEVEL_NO, ORDER_NO
@@ -28,18 +28,18 @@
     <!-- 단건 조회 -->
     <select id="findById" resultType="TbBizCode">
         SELECT
-            BIZ_SEQ
-             , PARENT_SEQ
-             , LEVEL_NO
-             , NAME
-             , DESCRIPTION
-             , SYS_CODE
-             , ORDER_NO
-             , DEL_YN
-             , REG_ID
-             , REG_DT
-             , MOD_ID
-             , MOD_DT
+        BIZ_SEQ
+        , PARENT_SEQ
+        , LEVEL_NO
+        , NAME
+        , DESCRIPTION
+        , SYS_CODE
+        , ORDER_NO
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        , MOD_ID
+        , MOD_DT
         FROM TB_BIZ_CODE
         WHERE BIZ_SEQ = #{bizSeq}
     </select>
@@ -47,7 +47,7 @@
     <!-- 등록 -->
     <insert id="save" parameterType="TbBizCode">
         <selectKey keyProperty="bizSeq" resultType="long" order="BEFORE">
-            SELECT SEQ_BIZ_CODE.NEXTVAL FROM DUAL
+            SELECT nextval('seq_biz_code')
         </selectKey>
         INSERT INTO TB_BIZ_CODE (
         BIZ_SEQ
@@ -61,26 +61,26 @@
         , REG_ID
         , REG_DT
         ) VALUES (
-        #{bizSeq,       jdbcType=INTEGER}
-        , #{parentSeq,    jdbcType=INTEGER}
+        #{bizSeq,       jdbcType=BIGINT}
+        , #{parentSeq,    jdbcType=BIGINT}
         , #{levelNo,      jdbcType=INTEGER}
         , #{name,         jdbcType=VARCHAR}
         , #{description,  jdbcType=VARCHAR}
-        , #{sysCode,      jdbcType=VARCHAR}   <!-- ✅ 추가 -->
+        , #{sysCode,      jdbcType=VARCHAR}
         , #{orderNo,      jdbcType=INTEGER}
         , 'N'
         , #{regId,        jdbcType=VARCHAR}
-        , SYSDATE
+        , CURRENT_TIMESTAMP
         )
     </insert>
 
     <!-- 수정 -->
     <update id="update" parameterType="TbBizCode">
         UPDATE TB_BIZ_CODE
-        SET MOD_DT = SYSDATE
+        SET MOD_DT = CURRENT_TIMESTAMP
         <if test="name != null">, NAME = #{name}</if>
         <if test="description != null">, DESCRIPTION = #{description}</if>
-        <if test="sysCode != null">, SYS_CODE = #{sysCode}</if> <!-- ✅ 추가 -->
+        <if test="sysCode != null">, SYS_CODE = #{sysCode}</if>
         <if test="orderNo != null">, ORDER_NO = #{orderNo}</if>
         <if test="modId != null">, MOD_ID = #{modId}</if>
         WHERE BIZ_SEQ = #{bizSeq}
@@ -90,7 +90,7 @@
     <delete id="deleteById">
         UPDATE TB_BIZ_CODE
         SET DEL_YN = 'Y'
-          , MOD_DT = SYSDATE
+        , MOD_DT = CURRENT_TIMESTAMP
         WHERE BIZ_SEQ = #{bizSeq}
     </delete>
 
@@ -98,15 +98,15 @@
         SELECT COUNT(*)
         FROM TB_BIZ_CODE
         WHERE PARENT_SEQ = #{bizSeq}
-          AND DEL_YN = 'N'
+        AND DEL_YN = 'N'
     </select>
 
     <!-- 정렬 순서 저장 -->
     <update id="updateOrder" parameterType="TbBizCode">
         UPDATE TB_BIZ_CODE
-        SET MOD_DT = SYSDATE
-          , MOD_ID = #{modId}
-          , ORDER_NO = #{orderNo, jdbcType=INTEGER}
+        SET MOD_DT = CURRENT_TIMESTAMP
+        , MOD_ID = #{modId}
+        , ORDER_NO = #{orderNo, jdbcType=INTEGER}
         WHERE BIZ_SEQ = #{bizSeq}
     </update>
 
@@ -122,16 +122,16 @@
 
     <select id="findFlatSystemList" resultType="EgovMap">
         SELECT C.BIZ_SEQ
-            , A.NAME                         AS DOMAIN_NAME  -- 1레벨
-            , B.NAME                         AS GROUP_NAME   -- 2레벨
-            , C.NAME                         AS SYSTEM_NAME  -- 3레벨
-            , C.SYS_CODE
-            , C.DESCRIPTION
+        , A.NAME AS DOMAIN_NAME
+        , B.NAME AS GROUP_NAME
+        , C.NAME AS SYSTEM_NAME
+        , C.SYS_CODE
+        , C.DESCRIPTION
         FROM TB_BIZ_CODE C
-                 JOIN TB_BIZ_CODE B ON C.PARENT_SEQ = B.BIZ_SEQ
-                 JOIN TB_BIZ_CODE A ON B.PARENT_SEQ = A.BIZ_SEQ
+        JOIN TB_BIZ_CODE B ON C.PARENT_SEQ = B.BIZ_SEQ
+        JOIN TB_BIZ_CODE A ON B.PARENT_SEQ = A.BIZ_SEQ
         WHERE C.LEVEL_NO = 3
-          AND C.DEL_YN = 'N'
+        AND C.DEL_YN = 'N'
         ORDER BY A.ORDER_NO, B.ORDER_NO, C.ORDER_NO
     </select>
 
