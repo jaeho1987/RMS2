@@ -91,7 +91,7 @@
         ) VALUES (
         #{reqSeq, jdbcType=BIGINT}
         , #{bizSeq, jdbcType=BIGINT}
-        , 'REQ-' || #{sysCode, jdbcType=VARCHAR} || '-' || LPAD(fn_next_seq('REQ', #{sysCode, jdbcType=VARCHAR}, '-'), 4, '0')
+        , 'REQ-' || 'RMS' || '-' || LPAD(fn_next_seq('REQ', 'RMS', '-')::text, 4, '0')
         , #{reqName, jdbcType=VARCHAR}
         , #{reqDesc, jdbcType=VARCHAR}
         , #{reqTypeCode, jdbcType=VARCHAR}
