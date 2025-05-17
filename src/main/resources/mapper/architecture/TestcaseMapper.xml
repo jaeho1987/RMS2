@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smart.rms.architecture.mapper.TestcaseMapper">
+
+    <select id="findAll" resultType="com.smart.rms.architecture.model.TbTestcase">
+        SELECT
+            TEST_SEQ
+             , REQ_SEQ
+             , TEST_ID
+             , TEST_NAME
+             , TEST_DESC
+             , INPUT_DATA
+             , EXPECTED_RESULT
+             , ACTUAL_RESULT
+             , TEST_STATUS
+             , ORDER_NO
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+             , DEL_YN
+        FROM TB_TEST_CASE
+        WHERE DEL_YN = 'N'
+        ORDER BY TEST_SEQ DESC
+    </select>
+
+    <select id="findById" resultType="com.smart.rms.architecture.model.TbTestcase">
+        SELECT
+            TEST_SEQ
+             , REQ_SEQ
+             , TEST_ID
+             , TEST_NAME
+             , TEST_DESC
+             , INPUT_DATA
+             , EXPECTED_RESULT
+             , ACTUAL_RESULT
+             , TEST_STATUS
+             , ORDER_NO
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+             , DEL_YN
+        FROM TB_TEST_CASE
+        WHERE TEST_SEQ = #{testSeq}
+    </select>
+
+    <select id="findByReqSeq" resultType="com.smart.rms.architecture.model.TbTestcase">
+        SELECT
+            TEST_SEQ
+             , REQ_SEQ
+             , TEST_ID
+             , TEST_NAME
+             , TEST_DESC
+             , INPUT_DATA
+             , EXPECTED_RESULT
+             , ACTUAL_RESULT
+             , TEST_STATUS
+             , ORDER_NO
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+             , DEL_YN
+        FROM TB_TEST_CASE
+        WHERE DEL_YN = 'N'
+          AND REQ_SEQ = #{reqSeq}
+        ORDER BY ORDER_NO ASC
+    </select>
+
+    <insert id="insert" parameterType="com.smart.rms.architecture.model.TbTestcase">
+        <selectKey resultType="long" keyProperty="testSeq" order="BEFORE">
+            SELECT nextval('seq_test_case')
+        </selectKey>
+        INSERT INTO TB_TEST_CASE (
+        TEST_SEQ
+        , REQ_SEQ
+        , TEST_ID
+        , TEST_NAME
+        , TEST_DESC
+        , INPUT_DATA
+        , EXPECTED_RESULT
+        , ACTUAL_RESULT
+        , TEST_STATUS
+        , ORDER_NO
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        ) VALUES (
+        #{testSeq, jdbcType=BIGINT}
+        , #{reqSeq, jdbcType=BIGINT}
+        , 'TC-' || #{sysCode, jdbcType=VARCHAR} || '-' || LPAD(CAST(fn_next_seq('TC', #{sysCode, jdbcType=VARCHAR}, '-') AS TEXT), 5, '0')
+        , #{testName, jdbcType=VARCHAR}
+        , #{testDesc, jdbcType=VARCHAR}
+        , #{inputData, jdbcType=VARCHAR}
+        , #{expectedResult, jdbcType=VARCHAR}
+        , #{actualResult, jdbcType=VARCHAR}
+        , #{testStatus, jdbcType=VARCHAR}
+        , #{orderNo, jdbcType=BIGINT}
+        , 'N'
+        , #{regId, jdbcType=VARCHAR}
+        , CURRENT_TIMESTAMP
+        )
+    </insert>
+    <update id="update" parameterType="com.smart.rms.architecture.model.TbTestcase">
+        UPDATE TB_TEST_CASE
+        SET MOD_DT = CURRENT_TIMESTAMP
+        <if test="testName != null">         , TEST_NAME = #{testName}</if>
+        <if test="testDesc != null">         , TEST_DESC = #{testDesc}</if>
+        <if test="inputData != null">        , INPUT_DATA = #{inputData}</if>
+        <if test="expectedResult != null">   , EXPECTED_RESULT = #{expectedResult}</if>
+        <if test="actualResult != null">     , ACTUAL_RESULT = #{actualResult}</if>
+        <if test="testStatus != null">       , TEST_STATUS = #{testStatus}</if>
+        <if test="orderNo != null">          , ORDER_NO = #{orderNo}</if>
+        <if test="modId != null">            , MOD_ID = #{modId}</if>
+        WHERE TEST_SEQ = #{testSeq}
+    </update>
+
+    <update id="deleteById">
+        UPDATE TB_TEST_CASE
+        SET MOD_DT = CURRENT_TIMESTAMP
+          , DEL_YN = 'Y'
+        WHERE TEST_SEQ = #{testSeq}
+    </update>
+
+    <update id="updateOrderOne" parameterType="com.smart.rms.architecture.model.TbTestcase">
+        UPDATE TB_TEST_CASE
+        SET ORDER_NO = #{orderNo}
+          , MOD_ID = #{modId}
+          , MOD_DT = CURRENT_TIMESTAMP
+        WHERE TEST_SEQ = #{testSeq}
+    </update>
+
+
+</mapper>

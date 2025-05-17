@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smart.rms.system.mapper.DevGuideMapper">
+    <!-- 테이블명에 해당하는 컬럼 목록과 데이터 타입 조회 -->
+    <select id="getColumns" resultType="map">
+        SELECT column_name, data_type
+        FROM information_schema.columns
+        WHERE lower(table_name) = lower(#{tableName})
+    </select>
+</mapper>
