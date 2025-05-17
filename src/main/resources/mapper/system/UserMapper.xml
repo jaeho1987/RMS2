@@ -1,31 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.smart.rms.system.mapper.UserMapper">
+<mapper namespace="com.smart.rms.system.mapper.UsersMapper">
 
-    <!-- 모든 사용자 조회 -->
-    <select id="findAll" resultType="com.smart.rms.system.model.TbUser">
-        SELECT
-            USER_ID
-             , USER_NAME
-             , EMAIL
-             , ROLE
-             , COMPANY_SEQ
-             , DEL_YN
-             , REG_ID
-             , REG_DT
-             , MOD_ID
-             , MOD_DT
-        FROM TB_USERS
-        WHERE DEL_YN = 'N'
-        ORDER BY USER_NAME
-    </select>
-
-    <!-- ID로 사용자 조회 -->
-    <select id="findById" parameterType="long" resultType="com.smart.rms.system.model.TbUser">
-        SELECT
+    <select id="findByKeyword" resultType="TbUsers">
+        SELECT /* UsersMapper.findByKeyword */
             USER_ID
              , USER_NAME
              , EMAIL
@@ -38,16 +17,35 @@
              , MOD_ID
              , MOD_DT
         FROM TB_USERS
-        WHERE USER_ID = #{userId}
+        WHERE 1=1
           AND DEL_YN = 'N'
+        ORDER BY USER_ID ASC
     </select>
 
-    <!-- 사용자 등록 -->
-    <insert id="save" parameterType="com.smart.rms.system.model.TbUser">
-        <selectKey keyProperty="userId" resultType="String" order="BEFORE">
+    <select id="findById" resultType="TbUsers">
+        SELECT /* UsersMapper.findById */
+            USER_ID
+             , USER_NAME
+             , EMAIL
+             , PASSWORD
+             , ROLE
+             , COMPANY_SEQ
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+        FROM TB_USERS
+        WHERE 1=1
+          AND DEL_YN = 'N'
+          AND USER_ID = #{id}
+    </select>
+
+    <insert id="insert" parameterType="TbUsers">
+        <selectKey keyProperty="userId" resultType="long" order="BEFORE">
             SELECT nextval('seq_users')
         </selectKey>
-        INSERT INTO TB_USERS (
+        INSERT INTO TB_USERS ( /* UsersMapper.insert */
         USER_ID
         , USER_NAME
         , EMAIL
@@ -57,40 +55,56 @@
         , DEL_YN
         , REG_ID
         , REG_DT
-        ) VALUES (
+        , MOD_ID
+        , MOD_DT
+        )
+        VALUES (
         #{userId}
         , #{userName}
         , #{email}
         , #{password}
         , #{role}
         , #{companySeq}
-        , 'N'
+        , #{delYn}
         , #{regId}
-        , CURRENT_TIMESTAMP
+        , #{regDt}
+        , #{modId}
+        , #{modDt}
         )
     </insert>
 
-    <!-- 사용자 수정 -->
-    <update id="update" parameterType="com.smart.rms.system.model.TbUser">
-        UPDATE TB_USERS
+    <update id="update" parameterType="TbUsers">
+        UPDATE TB_USERS    /* UsersMapper.update */
         SET MOD_DT = CURRENT_TIMESTAMP
-        <if test="userName != null">, USER_NAME = #{userName}</if>
-        <if test="email != null">, EMAIL = #{email}</if>
-        <if test="password != null">, PASSWORD = #{password}</if>
-        <if test="role != null">, ROLE = #{role}</if>
-        <if test="companySeq != null">, COMPANY_SEQ = #{companySeq}</if>
-        <if test="modId != null">, MOD_ID = #{modId}</if>
+        <if test="userName != null">
+            , USER_NAME = #{userName}
+        </if>
+        <if test="email != null">
+            , EMAIL = #{email}
+        </if>
+        <if test="password != null">
+            , PASSWORD = #{password}
+        </if>
+        <if test="role != null">
+            , ROLE = #{role}
+        </if>
+        <if test="companySeq != null">
+            , COMPANY_SEQ = #{companySeq}
+        </if>
+        <if test="delYn != null">
+            , DEL_YN = #{delYn}
+        </if>
+        <if test="modId != null">
+            , MOD_ID = #{modId}
+        </if>
         WHERE USER_ID = #{userId}
-        AND DEL_YN = 'N'
     </update>
 
-    <!-- 사용자 논리 삭제 -->
-    <update id="deleteById" parameterType="long">
-        UPDATE TB_USERS
+    <update id="deleteById">
+        UPDATE TB_USERS /* UsersMapper.deleteById */
         SET DEL_YN = 'Y'
           , MOD_ID = 'system'
           , MOD_DT = CURRENT_TIMESTAMP
-        WHERE USER_ID = #{userId}
+        WHERE USER_ID = #{id}
     </update>
-
 </mapper>

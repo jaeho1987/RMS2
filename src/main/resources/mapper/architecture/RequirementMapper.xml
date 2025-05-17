@@ -23,6 +23,7 @@
         , ACT_START_DT
         , ACT_END_DT
         , ORDER_NO
+        , LEVEL
         , DEL_YN
         , REG_ID
         , REG_DT
@@ -54,6 +55,7 @@
         , ACT_START_DT
         , ACT_END_DT
         , ORDER_NO
+        , LEVEL
         , DEL_YN
         , REG_ID
         , REG_DT
@@ -85,13 +87,14 @@
         , ACT_START_DT
         , ACT_END_DT
         , ORDER_NO
+        , LEVEL
         , DEL_YN
         , REG_ID
         , REG_DT
         ) VALUES (
         #{reqSeq, jdbcType=BIGINT}
         , #{bizSeq, jdbcType=BIGINT}
-        , 'REQ-' || #{sysCode, jdbcType=VARCHAR} || '-' || LPAD(fn_next_seq('REQ', #{sysCode, jdbcType=VARCHAR}, '-'), 4, '0')
+        , 'REQ-' || #{sysCode} || '-' || LPAD(fn_next_seq('REQ', #{sysCode}, '-')::text, 4, '0')
         , #{reqName, jdbcType=VARCHAR}
         , #{reqDesc, jdbcType=VARCHAR}
         , #{reqTypeCode, jdbcType=VARCHAR}
@@ -104,6 +107,10 @@
         , #{actStartDt, jdbcType=TIMESTAMP}
         , #{actEndDt, jdbcType=TIMESTAMP}
         , #{orderNo, jdbcType=INTEGER}
+        , ( SELECT COALESCE(MAX(level), 0) + 1
+            FROM TB_REQUIREMENT
+            WHERE REQ_SEQ = #{parentSeq, jdbcType=BIGINT}
+        )
         , 'N'
         , #{regId, jdbcType=VARCHAR}
         , CURRENT_TIMESTAMP
@@ -147,5 +154,25 @@
         , MOD_DT = CURRENT_TIMESTAMP
         WHERE REQ_SEQ = #{reqSeq}
     </update>
+
+    <select id="findFlatRequirementList" resultType="EgovMap" parameterType="long">
+        SELECT C.REQ_SEQ
+             , C.REQ_ID
+             , C.REQ_NAME
+             , A.REQ_NAME AS LEVEL1_NAME
+             , B.REQ_NAME AS LEVEL2_NAME
+             , C.REQ_NAME AS LEVEL3_NAME
+             , FNC_CODE_NAME('REQ_TYPE_CODE', C.REQ_TYPE_CODE) AS REQ_TYPE_NAME
+             , FNC_CODE_NAME('PRIORITY_CODE', C.PRIORITY_CODE) AS PRIORITY_NAME
+        FROM TB_REQUIREMENT C JOIN TB_REQUIREMENT B ON (C.PARENT_SEQ = B.REQ_SEQ)
+                              JOIN TB_REQUIREMENT A ON (B.PARENT_SEQ = A.REQ_SEQ)
+        WHERE C.DEL_YN = 'N'
+          AND B.DEL_YN = 'N'
+          AND A.DEL_YN = 'N'
+          AND C.BIZ_SEQ = #{bizSeq}
+        ORDER BY A.ORDER_NO
+               , B.ORDER_NO
+               , C.ORDER_NO
+    </select>
 
 </mapper>

@@ -3,13 +3,14 @@ server:
 
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/rms?currentSchema=rms
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:postgresql://localhost:5432/rms?currentSchema=rms
     username: postgres
     password: rms!#24
 
 mybatis:
   configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
     map-underscore-to-camel-case: true
     cache-enabled: false
     default-fetch-size: 100
@@ -17,11 +18,14 @@ mybatis:
   type-aliases-package: com.smart.rms.system.model, com.smart.rms.architecture.model, com.smart.rms.common.map
   mapper-locations: classpath:mapper/**/*.xml
 
+
 logging:
   level:
-    root: info
     com.smart.rms: debug
     org.mybatis: debug
-    org.springframework.boot.autoconfigure.security: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: INFO
+    org.apache.ibatis: debug
+
+jwt:
+  secret: ThisIsAVerySecretJwtSigningKeyThatShouldBe32BytesAtLeast!
+  access-token-expiration-ms: 300000       # 5분
+  refresh-token-expiration-ms: 604800000    # 7일
