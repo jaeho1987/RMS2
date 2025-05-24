@@ -8,6 +8,7 @@ import java.util.Date;
 public class TbTestcase {
     private Long testSeq;
     private Long reqSeq;
+    private String reqName;
     private String testId;
     private String testName;
     private String testDesc;
@@ -24,4 +25,5 @@ public class TbTestcase {
 
     // 생성용 sysCode (ID 자동 생성 시 사용)
     private String sysCode;
+    private Long bizSeq;
 }

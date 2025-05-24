@@ -2,13 +2,16 @@ package com.smart.rms.architecture.controller;
 
 import com.smart.rms.architecture.model.TbTestcase;
 import com.smart.rms.architecture.service.TestcaseService;
+import com.smart.rms.system.model.TbUsers;
 import com.smart.rms.util.ApiUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/testcases")
 @RequiredArgsConstructor
@@ -19,6 +22,13 @@ public class TestcaseController {
     @GetMapping
     public List<TbTestcase> getByReqSeq(@RequestParam Long reqSeq) {
         return testcaseService.findByReqSeq(reqSeq);
+    }
+
+    @GetMapping("/findAll")
+    public List<TbTestcase> findAll(@ModelAttribute TbTestcase testcase) {
+        log.debug("findAll testcase: {}", testcase);
+
+        return testcaseService.findAll(testcase);
     }
 
     @GetMapping("/{id}")

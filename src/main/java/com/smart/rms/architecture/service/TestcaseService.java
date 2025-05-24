@@ -13,8 +13,8 @@ public class TestcaseService {
 
     private final TestcaseMapper testcaseMapper;
 
-    public List<TbTestcase> findAll() {
-        return testcaseMapper.findAll();
+    public List<TbTestcase> findAll(TbTestcase testcase) {
+        return testcaseMapper.findAll(testcase);
     }
 
     public TbTestcase findById(Long testSeq) {

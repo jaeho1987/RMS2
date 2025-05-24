@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface RequirementMapper {
@@ -14,4 +15,6 @@ public interface RequirementMapper {
     int update(TbRequirement requirement);
     int deleteById(@Param("reqSeq") Long reqSeq);
     int updateOrderOne(TbRequirement requirement);
+    List<Map<String, Object>> findFlatRequirementList(@Param("bizSeq") Long bizSeq);
+
 }

@@ -35,11 +35,8 @@ public class MenuController {
     }
 
     @PutMapping("/{menuSeq}")
-    public ResponseEntity<Void> updateMenu(@PathVariable Long menuSeq,
-                                           @RequestBody TbMenu tbMenu,
-                                           Authentication authentication) {
+    public ResponseEntity<Void> updateMenu(@PathVariable Long menuSeq, @RequestBody TbMenu tbMenu) {
         tbMenu.setMenuSeq(menuSeq);
-        tbMenu.setModId(authentication.getName());
         menuService.updateMenu(tbMenu);
         return ResponseEntity.ok().build();
     }

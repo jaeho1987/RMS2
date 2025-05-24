@@ -7,7 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface TestcaseMapper {
-    List<TbTestcase> findAll();
+    List<TbTestcase> findAll(TbTestcase testcase);
     TbTestcase findById(Long testSeq);
     List<TbTestcase> findByReqSeq(Long reqSeq);
     void insert(TbTestcase testcase);

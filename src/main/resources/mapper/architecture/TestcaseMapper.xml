@@ -5,10 +5,12 @@
 
 <mapper namespace="com.smart.rms.architecture.mapper.TestcaseMapper">
 
-    <select id="findAll" resultType="com.smart.rms.architecture.model.TbTestcase">
-        SELECT
+    <select id="findAll" parameterType="TbTestcase" resultType="TbTestcase">
+        SELECT /* TestcaseMapper.findAll */
             TEST_SEQ
              , REQ_SEQ
+             , BIZ_SEQ
+             , (SELECT REQ_NAME FROM TB_REQUIREMENT TR WHERE TR.REQ_SEQ = TTC.REQ_SEQ ) AS REQ_NAME
              , TEST_ID
              , TEST_NAME
              , TEST_DESC
@@ -22,15 +24,22 @@
              , MOD_ID
              , MOD_DT
              , DEL_YN
-        FROM TB_TEST_CASE
+        FROM TB_TEST_CASE TTC
         WHERE DEL_YN = 'N'
-        ORDER BY TEST_SEQ DESC
+        <if test="bizSeq != null and bizSeq != ''">
+            AND BIZ_SEQ = #{bizSeq}
+        </if>
+        <if test="reqSeq != null and reqSeq != ''">
+            AND REQ_SEQ = #{reqSeq}
+        </if>
+        ORDER BY REQ_SEQ ASC, ORDER_NO ASC
     </select>
 
     <select id="findById" resultType="com.smart.rms.architecture.model.TbTestcase">
-        SELECT
+        SELECT  /* TestcaseMapper.findById */
             TEST_SEQ
              , REQ_SEQ
+             , BIZ_SEQ
              , TEST_ID
              , TEST_NAME
              , TEST_DESC
@@ -49,9 +58,10 @@
     </select>
 
     <select id="findByReqSeq" resultType="com.smart.rms.architecture.model.TbTestcase">
-        SELECT
+        SELECT          /* TestcaseMapper.findByReqSeq */
             TEST_SEQ
              , REQ_SEQ
+             , BIZ_SEQ
              , TEST_ID
              , TEST_NAME
              , TEST_DESC
@@ -75,9 +85,10 @@
         <selectKey resultType="long" keyProperty="testSeq" order="BEFORE">
             SELECT nextval('seq_test_case')
         </selectKey>
-        INSERT INTO TB_TEST_CASE (
+        INSERT INTO TB_TEST_CASE (  /* TestcaseMapper.insert */
         TEST_SEQ
         , REQ_SEQ
+        , BIZ_SEQ
         , TEST_ID
         , TEST_NAME
         , TEST_DESC
@@ -92,6 +103,7 @@
         ) VALUES (
         #{testSeq, jdbcType=BIGINT}
         , #{reqSeq, jdbcType=BIGINT}
+        , #{bizSeq, jdbcType=BIGINT}
         , 'TC-' || #{sysCode, jdbcType=VARCHAR} || '-' || LPAD(CAST(fn_next_seq('TC', #{sysCode, jdbcType=VARCHAR}, '-') AS TEXT), 5, '0')
         , #{testName, jdbcType=VARCHAR}
         , #{testDesc, jdbcType=VARCHAR}
@@ -106,7 +118,7 @@
         )
     </insert>
     <update id="update" parameterType="com.smart.rms.architecture.model.TbTestcase">
-        UPDATE TB_TEST_CASE
+        UPDATE TB_TEST_CASE /* TestcaseMapper.update */
         SET MOD_DT = CURRENT_TIMESTAMP
         <if test="testName != null">         , TEST_NAME = #{testName}</if>
         <if test="testDesc != null">         , TEST_DESC = #{testDesc}</if>
@@ -120,14 +132,14 @@
     </update>
 
     <update id="deleteById">
-        UPDATE TB_TEST_CASE
+        UPDATE TB_TEST_CASE     /* TestcaseMapper.deleteById */
         SET MOD_DT = CURRENT_TIMESTAMP
           , DEL_YN = 'Y'
         WHERE TEST_SEQ = #{testSeq}
     </update>
 
     <update id="updateOrderOne" parameterType="com.smart.rms.architecture.model.TbTestcase">
-        UPDATE TB_TEST_CASE
+        UPDATE TB_TEST_CASE     /* TestcaseMapper.updateOrderOne */
         SET ORDER_NO = #{orderNo}
           , MOD_ID = #{modId}
           , MOD_DT = CURRENT_TIMESTAMP

@@ -53,4 +53,11 @@ public class RequirementController {
         int result = service.updateOrderBatch(list);
         return ApiUtil.success(result);  // 성공 건수
     }
+
+    @GetMapping("/flat-list")
+    public ResponseEntity<?> getFlatRequirementList(@RequestParam Long bizSeq) {
+        List<Map<String, Object>> list = service.findFlatRequirementList(bizSeq);
+        return ApiUtil.success(list);
+    }
+
 }
