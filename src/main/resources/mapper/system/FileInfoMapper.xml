@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smart.rms.system.mapper.FileInfoMapper">
+
+    <select id="findByKeyword" resultType="TbFileInfo">
+        SELECT /* FileInfoMapper.findByKeyword */
+            FILE_SEQ
+             , REF_SEQ
+             , FILE_TYPE
+             , FILE_NAME
+             , ORIGINAL_NAME
+             , FILE_PATH
+             , FILE_EXT
+             , FILE_SIZE
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+        FROM TB_FILE_INFO
+        WHERE 1=1
+          AND DEL_YN = 'N'
+        ORDER BY FILE_SEQ ASC
+    </select>
+
+    <select id="findById" resultType="TbFileInfo">
+        SELECT /* FileInfoMapper.findById */
+            FILE_SEQ
+             , REF_SEQ
+             , FILE_TYPE
+             , FILE_NAME
+             , ORIGINAL_NAME
+             , FILE_PATH
+             , FILE_EXT
+             , FILE_SIZE
+             , DEL_YN
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+        FROM TB_FILE_INFO
+        WHERE 1=1
+          AND DEL_YN = 'N'
+          AND FILE_SEQ = #{id}
+    </select>
+
+    <insert id="insert" parameterType="TbFileInfo">
+        <selectKey keyProperty="fileSeq" resultType="long" order="BEFORE">
+            SELECT nextval('seq_file_info')
+        </selectKey>
+        INSERT INTO TB_FILE_INFO ( /* FileInfoMapper.insert */
+        FILE_SEQ
+        , REF_SEQ
+        , FILE_TYPE
+        , FILE_NAME
+        , ORIGINAL_NAME
+        , FILE_PATH
+        , FILE_EXT
+        , FILE_SIZE
+        , DEL_YN
+        , REG_ID
+        , REG_DT
+        , MOD_ID
+        , MOD_DT
+        )
+        VALUES (
+        #{fileSeq}
+        , #{refSeq}
+        , #{fileType}
+        , #{fileName}
+        , #{originalName}
+        , #{filePath}
+        , #{fileExt}
+        , #{fileSize}
+        , #{delYn}
+        , #{regId}
+        , #{regDt}
+        , #{modId}
+        , #{modDt}
+        )
+    </insert>
+
+    <update id="update" parameterType="TbFileInfo">
+        UPDATE TB_FILE_INFO    /* FileInfoMapper.update */
+        SET MOD_DT = CURRENT_TIMESTAMP
+        <if test="refSeq != null">
+            , REF_SEQ = #{refSeq}
+        </if>
+        <if test="fileType != null">
+            , FILE_TYPE = #{fileType}
+        </if>
+        <if test="fileName != null">
+            , FILE_NAME = #{fileName}
+        </if>
+        <if test="originalName != null">
+            , ORIGINAL_NAME = #{originalName}
+        </if>
+        <if test="filePath != null">
+            , FILE_PATH = #{filePath}
+        </if>
+        <if test="fileExt != null">
+            , FILE_EXT = #{fileExt}
+        </if>
+        <if test="fileSize != null">
+            , FILE_SIZE = #{fileSize}
+        </if>
+        <if test="delYn != null">
+            , DEL_YN = #{delYn}
+        </if>
+        <if test="regId != null">
+            , REG_ID = #{regId}
+        </if>
+        <if test="regDt != null">
+            , REG_DT = #{regDt}
+        </if>
+        <if test="modId != null">
+            , MOD_ID = #{modId}
+        </if>
+        <if test="modDt != null">
+            , MOD_DT = #{modDt}
+        </if>
+        WHERE FILE_SEQ = #{fileSeq}
+    </update>
+
+    <update id="deleteById">
+        UPDATE TB_FILE_INFO /* FileInfoMapper.deleteById */
+        SET DEL_YN = 'Y'
+          , MOD_ID = 'system'
+          , MOD_DT = CURRENT_TIMESTAMP
+        WHERE FILE_SEQ = #{id}
+    </update>
+
+    <update id="updateOrderOne" parameterType="TbFileInfo">
+        UPDATE TB_FILE_INFO    /* FileInfoMapper.updateOrderOne */
+        SET ORDER_NO = #{orderNo}
+          , MOD_ID = #{modId}
+          , MOD_DT = CURRENT_TIMESTAMP
+        WHERE FILE_SEQ = #{fileSeq}
+    </update>
+</mapper>
