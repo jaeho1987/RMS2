@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smart.rms.architecture.mapper.ProcFunctionMapMapper">
+
+    <select id="findByKeyword" resultType="TbProcFunctionMap">
+        SELECT /* ProcFunctionMapMapper.findByKeyword */
+            PROC_FNC_SEQ
+             , PROC_NAME
+             , FUNC_ID
+             , FUNC_NAME
+             , CALL_PATH
+             , INPUT_PARAMS
+             , OUTPUT_COLUMNS
+             , DB_TABLES
+             , FUNC_SUMMARY
+             , BIZ_RULES
+             , TOBE_CONTROLLER
+             , TOBE_SERVICE
+             , TOBE_REPOSITORY
+             , STATUS
+             , REMARKS
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+             , DEL_YN
+        FROM TB_PROC_FUNCTION_MAP
+        WHERE 1=1
+          AND DEL_YN = 'N'
+        ORDER BY PROC_FNC_SEQ ASC
+    </select>
+
+    <select id="findById" resultType="TbProcFunctionMap">
+        SELECT /* ProcFunctionMapMapper.findById */
+            PROC_FNC_SEQ
+             , PROC_NAME
+             , FUNC_ID
+             , FUNC_NAME
+             , CALL_PATH
+             , INPUT_PARAMS
+             , OUTPUT_COLUMNS
+             , DB_TABLES
+             , FUNC_SUMMARY
+             , BIZ_RULES
+             , TOBE_CONTROLLER
+             , TOBE_SERVICE
+             , TOBE_REPOSITORY
+             , STATUS
+             , REMARKS
+             , REG_ID
+             , REG_DT
+             , MOD_ID
+             , MOD_DT
+             , DEL_YN
+        FROM TB_PROC_FUNCTION_MAP
+        WHERE 1=1
+          AND DEL_YN = 'N'
+          AND PROC_FNC_SEQ = #{id}
+    </select>
+
+    <insert id="insert" parameterType="TbProcFunctionMap">
+        <selectKey keyProperty="procFncSeq" resultType="long" order="BEFORE">
+            SELECT nextval('seq_proc_function_map')
+        </selectKey>
+        INSERT INTO TB_PROC_FUNCTION_MAP ( /* ProcFunctionMapMapper.insert */
+        PROC_FNC_SEQ
+        , PROC_NAME
+        , FUNC_ID
+        , FUNC_NAME
+        , CALL_PATH
+        , INPUT_PARAMS
+        , OUTPUT_COLUMNS
+        , DB_TABLES
+        , FUNC_SUMMARY
+        , BIZ_RULES
+        , TOBE_CONTROLLER
+        , TOBE_SERVICE
+        , TOBE_REPOSITORY
+        , STATUS
+        , REMARKS
+        , REG_ID
+        , REG_DT
+        , MOD_ID
+        , MOD_DT
+        , DEL_YN
+        )
+        VALUES (
+        #{procFncSeq}
+        , #{procName}
+        , #{funcId}
+        , #{funcName}
+        , #{callPath}
+        , #{inputParams}
+        , #{outputColumns}
+        , #{dbTables}
+        , #{funcSummary}
+        , #{bizRules}
+        , #{tobeController}
+        , #{tobeService}
+        , #{tobeRepository}
+        , #{status}
+        , #{remarks}
+        , #{regId}
+        , #{regDt}
+        , #{modId}
+        , #{modDt}
+        , #{delYn}
+        )
+    </insert>
+
+    <update id="update" parameterType="TbProcFunctionMap">
+        UPDATE TB_PROC_FUNCTION_MAP    /* ProcFunctionMapMapper.update */
+        SET MOD_DT = CURRENT_TIMESTAMP
+        <if test="procName != null">
+            , PROC_NAME = #{procName}
+        </if>
+        <if test="funcId != null">
+            , FUNC_ID = #{funcId}
+        </if>
+        <if test="funcName != null">
+            , FUNC_NAME = #{funcName}
+        </if>
+        <if test="callPath != null">
+            , CALL_PATH = #{callPath}
+        </if>
+        <if test="inputParams != null">
+            , INPUT_PARAMS = #{inputParams}
+        </if>
+        <if test="outputColumns != null">
+            , OUTPUT_COLUMNS = #{outputColumns}
+        </if>
+        <if test="dbTables != null">
+            , DB_TABLES = #{dbTables}
+        </if>
+        <if test="funcSummary != null">
+            , FUNC_SUMMARY = #{funcSummary}
+        </if>
+        <if test="bizRules != null">
+            , BIZ_RULES = #{bizRules}
+        </if>
+        <if test="tobeController != null">
+            , TOBE_CONTROLLER = #{tobeController}
+        </if>
+        <if test="tobeService != null">
+            , TOBE_SERVICE = #{tobeService}
+        </if>
+        <if test="tobeRepository != null">
+            , TOBE_REPOSITORY = #{tobeRepository}
+        </if>
+        <if test="status != null">
+            , STATUS = #{status}
+        </if>
+        <if test="remarks != null">
+            , REMARKS = #{remarks}
+        </if>
+        <if test="regId != null">
+            , REG_ID = #{regId}
+        </if>
+        <if test="regDt != null">
+            , REG_DT = #{regDt}
+        </if>
+        <if test="modId != null">
+            , MOD_ID = #{modId}
+        </if>
+        <if test="modDt != null">
+            , MOD_DT = #{modDt}
+        </if>
+        <if test="delYn != null">
+            , DEL_YN = #{delYn}
+        </if>
+        WHERE PROC_FNC_SEQ = #{procFncSeq}
+    </update>
+
+    <update id="deleteById">
+        UPDATE TB_PROC_FUNCTION_MAP /* ProcFunctionMapMapper.deleteById */
+        SET DEL_YN = 'Y'
+          , MOD_ID = 'system'
+          , MOD_DT = CURRENT_TIMESTAMP
+        WHERE PROC_FNC_SEQ = #{id}
+    </update>
+
+    <update id="updateOrderOne" parameterType="TbProcFunctionMap">
+        UPDATE TB_PROC_FUNCTION_MAP    /* ProcFunctionMapMapper.updateOrderOne */
+        SET ORDER_NO = #{orderNo}
+          , MOD_ID = #{modId}
+          , MOD_DT = CURRENT_TIMESTAMP
+        WHERE PROC_FNC_SEQ = #{procFncSeq}
+    </update>
+</mapper>
